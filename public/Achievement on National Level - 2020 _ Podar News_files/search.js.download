@@ -1,0 +1,105 @@
+//var SchoolName = ["Podar International School Powai, Mumbai - Maharashtra (CBSE)", "Podar International School Powai, Mumbai - Maharashtra (Cambridge International)", "Afghanistan", "Albania", "Algeria"];
+
+function autocomplete(e) {
+    var n;
+    //alert(e);
+    //alert(document.getElementById("headerSearch"));
+
+    //var searchurl = "https://" + window.location.host + "/locations.aspx/GetAutoCompleteData";
+
+
+    //alert("http://" + window.location.host + "/locations.aspx/GetAutoCompleteData");
+
+
+
+
+
+    $.ajax({
+        url: "/locations.aspx/GetAutoCompleteData",
+        data: "{'username':'" + this.document.getElementById("headerSearch") + "'}",
+        dataType: 'json',
+        type: "POST",
+        contentType: "application/json; charset=utf-8",
+        success: function (data) {
+
+            // alert('Pop up'+ data.d);
+
+            var t = data.d;
+
+            function a(e) {
+                if (!e) return !1;
+                ! function (e) {
+                    for (var t = 0; t < e.length; t++) e[t].classList.remove("autocomplete-active")
+                }(e), n >= e.length && (n = 0), n < 0 && (n = e.length - 1), e[n].classList.add("autocomplete-active")
+            }
+
+            function i(t) {
+                for (var n = document.getElementsByClassName("autocomplete-items"), a = 0; a < n.length; a++) t != n[a] && t != e && n[a].parentNode.removeChild(n[a])
+            }
+
+
+            e.addEventListener("input", (function (a) {
+                var o, r, l, c = this.value;
+                //alert("inside listener" + e.value);                
+                if (i(), !c) return !1;
+
+                //for search functionality (t[l].toUpperCase()).indexOf(c.toUpperCase()) != -1 --used this
+                for (n = -1, (o = document.createElement("DIV")).setAttribute("id", this.id + "autocomplete-list"), o.setAttribute("class", "autocomplete-items"), this.parentNode.appendChild(o), l = 0; l < t.length; l++) (t[l].toUpperCase()).indexOf(c.toUpperCase()) != -1 && ((r = document.createElement("a")).innerHTML = "<div>" + (t[l].split("|")[0]), r.innerHTML += "", r.setAttribute("target", "_blank"), r.setAttribute("style", "text-decoration:none;"), r.setAttribute("href", "https://" + t[l].split('|')[1] + ""), r.innerHTML += "</a><input type='hidden' value='" + (t[l].split("|")[0]) + "'>", r.addEventListener("click", (function (t) {
+                    e.value = this.getElementsByTagName("input")[0].value, i(),
+                        window.dataLayer = window.dataLayer || [];
+                    window.dataLayer.push({
+                        'event': 'dl - search select recommendation',
+                        'cta_location': 'global navigation',         // this should be replaced with values based on each event
+                        'additional_info': "https://" + t[l].split('|')[1],         // this should be replaced with values based on each event
+                        'school_location': ''         // this should be replaced with values based on each event
+                    });
+
+                })), o.appendChild(r))
+            })), e.addEventListener("keydown", (function (e) {
+                var t = document.getElementById(this.id + "autocomplete-list");
+                t && (t = t.getElementsByTagName("div")), 40 == e.keyCode ? (n++ , a(t)) : 38 == e.keyCode ? (n-- , a(t)) : 13 == e.keyCode && (e.preventDefault(), n > -1 && t && t[n].click())
+            })), document.addEventListener("click", (function (e) {
+                //i(e.target)
+                //window.open(hdnid.value)
+                //alert("hello");
+            }))
+
+
+
+            //var val = "<ul id='userlist' style='list-style: none;'>";
+            //$.map(data.d, function (item) {
+            //    var itemval = item.split('|')[0];
+            //    var itemlink = item.split('|')[1];
+
+            //    // val += '<li style="margin-bottom:0.5rem;"><a>' + itemval + '</a></li>'
+            //    val += '<li style="margin-bottom:0.5rem;"><a target="_blank" href="https://' + itemlink + '"><p style="margin-bottom: 0rem;">' + itemval + '</p></a></li>'
+
+            //    //document.getElementById('hdnCID').value = 'http://' + itemlink;
+            //    //$('#hdnCID').val('http://uatnew.' + itemlink);
+            //})
+
+            //val += '</ul>'
+            //$('#listItems').show();
+            //$('#listItems').html(val);
+            //$('#userlist li').click(function (e) {
+            //    //alert($(this).text());
+            //    $('#<%=txtsearch.ClientID%>').val($(this).text());
+            //    //var hdnid = document.getElementById("hdnCID");                        
+            //    //window.open(hdnid.value)
+            //    document.getElementById('hdnCID').value = $(this).children('a').attr('href');
+            //    $('#listItems').hide();
+            //})
+        },
+        error: function (response) {
+            alert(response.responseText);
+        }
+    });
+
+
+}
+
+
+
+$(document).ready((function () {
+    $("#headerSearch").length && autocomplete(document.getElementById("headerSearch"))
+}));
